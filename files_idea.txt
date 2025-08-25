@@ -1,0 +1,62 @@
+
+space-game/
+│
+├── assets/                      # All non-code resources
+│   ├── images/                  # Sprites, textures, backgrounds
+│   │   ├── player.png
+│   │   ├── enemy.png
+│   │   └── projectiles/
+│   │       ├── laser.png
+│   │       └── missile.png
+│   ├── sounds/                  # Sound effects + music
+│   │   ├── laser.wav
+│   │   ├── explosion.wav
+│   │   └── bg_music.ogg
+│   └── fonts/                   # Custom fonts
+│       └── spacefont.ttf
+│
+├── src/                         # All source code lives here
+│   ├── main.py                  # Entry point (game loop starts here)
+│   ├── core/                    # Engine-level systems
+│   │   ├── __init__.py
+│   │   ├── settings.py          # Global constants (screen size, FPS, colors…)
+│   │   ├── utils.py             # Reusable helpers (math, collisions, etc.)
+│   │   └── game.py              # Game class (loop, state mgmt)
+│   │
+│   ├── entities/                # Anything that appears on screen
+│   │   ├── __init__.py
+│   │   ├── player.py            # Player spaceship (movement, shooting)
+│   │   ├── enemy.py             # Enemy behaviors, AI patterns
+│   │   ├── projectile.py        # Lasers, bullets, missiles
+│   │   └── powerup.py           # Collectible items
+│   │
+│   ├── scenes/                  # Screens / levels
+│   │   ├── __init__.py
+│   │   ├── menu.py              # Main menu UI
+│   │   ├── gameplay.py          # In-game logic (calls entities)
+│   │   └── gameover.py          # Game over screen
+│   │
+│   ├── ui/                      # User interface elements
+│   │   ├── __init__.py
+│   │   ├── hud.py               # Health bars, score, minimap
+│   │   └── buttons.py           # Menu buttons
+│   │
+│   └── systems/                 # Non-visual systems
+│       ├── __init__.py
+│       ├── input.py             # Keyboard/mouse/controller handling
+│       ├── physics.py           # Collision detection, movement math
+│       └── audio.py             # Music & sound management
+│
+├── tests/                       # Unit & integration tests
+│   ├── test_player.py
+│   ├── test_enemy.py
+│   └── test_utils.py
+│
+├── docs/                        # Documentation
+│   ├── design.md                # Design doc, game loop explanation
+│   └── controls.md              # Keybindings, game instructions
+│
+├── .gitignore
+├── requirements.txt             # Python dependencies
+├── README.md                    # Project overview
+└── LICENSE                      # Open-source license (MIT/GPL/...)
