@@ -1,11 +1,10 @@
 import pygame 
+import config
 
 BLACK = (0,0,0)
 background_color = BLACK 
-WIDTH = 900
-HEIGHT = 600
 caption = 'Starfall'
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
 
 pygame.display.set_caption(caption)
 screen.fill(background_color)
