@@ -1,5 +1,4 @@
 import pygame 
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 class Game: 
     def __init__(self, background_color, caption, window_width, window_height): 
