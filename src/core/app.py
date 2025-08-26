@@ -1,7 +1,8 @@
 import pygame
-from game import Game 
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from src.core.game import Game 
+from src.core.config import WINDOW_WIDTH, WINDOW_HEIGHT
 
+pygame.init()
 
 black = (0,0,0)
 game = Game(black, 'Starfall', WINDOW_WIDTH, WINDOW_HEIGHT) 
