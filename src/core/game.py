@@ -1,4 +1,7 @@
 import pygame 
+from src.entities.player import Player, player_image_path, stronger_player_image_path
+
+pygame.init()
 
 class Game: 
     def __init__(self, background_color, caption, window_width, window_height): 
@@ -13,9 +16,16 @@ class Game:
         self.screen.fill(self.background_color) 
 
         pygame.display.flip()
-
+    
+        health = 100
+        speed = 8
+        player = Player(health, speed, img_path=player_image_path)
         running = True
         while running: 
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     running = False
+            
+            player.display(self.screen) 
+            player.display_hitbox(self.screen)
+            self.screen.fill(self.background_color)
