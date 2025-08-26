@@ -11,7 +11,7 @@ class Game:
 
     def run(self): 
         pygame.display.set_caption(self.caption)
-        screen.fill(self.background_color) 
+        self.screen.fill(self.background_color) 
 
         pygame.display.flip()
 
