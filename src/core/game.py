@@ -1,5 +1,5 @@
 import pygame 
-from src.entities.player import Player, player_image_path, stronger_player_image_path
+from src.entities.player import Player, player_image_path, stronger_player_image_path, player_image
 
 pygame.init()
 
@@ -15,17 +15,18 @@ class Game:
         pygame.display.set_caption(self.caption)
         self.screen.fill(self.background_color) 
 
-        pygame.display.flip()
-    
         health = 100
-        speed = 8
-        player = Player(health, speed, img_path=player_image_path)
+        speed = 1
+        player = Player(health, speed, image=player_image)
         running = True
         while running: 
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     running = False
             
+            self.screen.fill(self.background_color)
+            player.move()
             player.display(self.screen) 
             player.display_hitbox(self.screen)
-            self.screen.fill(self.background_color)
+
+            pygame.display.flip()
