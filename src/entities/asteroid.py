@@ -17,14 +17,14 @@ class Asteroid:
        
         if self.chance == 0:
             self.type = "small_asteroid"
-            self.health = 100
+            self.health = 50 
             self.speed = 0.25
             self.size_x = randint(70, 120)
             self.size_y = randint(70, 130)
             self.img = pygame.transform.scale(asteroid_image, (self.size_x, self.size_y))
         else:
             self.type = "big_asteroid"
-            self.health = 150
+            self.health = 100
             self.speed = 0.25
             self.size_x = randint(120, 150)
             self.size_y = randint(130, 160) 
