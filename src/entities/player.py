@@ -1,5 +1,7 @@
 import pygame
 from src.core.config import WINDOW_WIDTH, WINDOW_HEIGHT
+from src.entities.laser import Laser
+from time import time 
 
 pygame.init()
 player_image_path = "C:/Users/100TR/Starfall/assets/images/player.png"
@@ -19,6 +21,7 @@ class Player:
         self.speed = speed
         self.img = image 
         self.rect = self.img.get_rect()
+        self.last_shot = time()
 
     def display(self, screen): 
         self.rect.x = self.x 
