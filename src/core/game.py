@@ -63,7 +63,7 @@ class Game:
             keys = pygame.key.get_pressed()
             
             self.running_time = time() - self.start_time 
-
+                
             if self.running_time <= 30:
                 aggression = 1 
                 difficulty = 1
@@ -73,7 +73,7 @@ class Game:
             elif 60 < self.running_time <= 180: 
                 aggression = 0.25 
                 difficulty = 3
-                vine_boom.play()
+
 
             if curr_time - last_spawn_check >= aggression: 
                 last_spawn_check = curr_time 
@@ -81,13 +81,15 @@ class Game:
                 if random.random() < 0.5: 
                     asteroid = Asteroid()
                     asteroids.append(asteroid)
+                    if difficulty == 3: 
+                        vine_boom.play()
 
             player.move()
 
             if keys[pygame.K_x]:
                 curr_shot = time()
                 if (curr_shot - player.last_shot >= 0.30):
-                    laser = Laser(speed=2, damage=50, x=player.x+12, y=player.y-20)
+                    laser = Laser(speed=2, damage=25, x=player.x+12, y=player.y-20)
                     print("Shot laser!")
                     laser_sound.play()
                     lasers.append(laser)

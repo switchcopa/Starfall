@@ -20,7 +20,7 @@ class Asteroid:
             self.health = 50 
             self.speed = 0.25
             self.size_x = randint(70, 120)
-            self.size_y = randint(70, 130)
+            self.size_y = randint(100, 130)
             self.img = pygame.transform.scale(asteroid_image, (self.size_x, self.size_y))
         else:
             self.type = "big_asteroid"
