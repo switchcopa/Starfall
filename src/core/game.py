@@ -27,7 +27,6 @@ class Game:
         self.start_time = time()
         self.running_time = 0
 
-
     def run(self): 
         background_music.play()
         pygame.display.set_caption(self.caption)
@@ -88,7 +87,7 @@ class Game:
             player.move()
             if keys[pygame.K_x]:
                 if curr_time - player.last_shot >= 0.22:
-                    lasers.append(Laser(speed=16, damage=25, x=player.x+12, y=player.y-20))
+                    lasers.append(Laser(speed=16, damage=25, x=player.x+34, y=player.y-20))
                     laser_sound.play()
                     player.last_shot = curr_time
 
