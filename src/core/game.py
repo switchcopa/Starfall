@@ -5,6 +5,7 @@ import random
 from src.entities.asteroid import Asteroid
 from src.entities.laser import Laser
 from src.core.config import WINDOW_HEIGHT, WINDOW_WIDTH
+from src.ui.UI import UI
 
 pygame.init()
 pygame.mixer.init()
@@ -27,102 +28,137 @@ class Game:
         self.start_time = time()
         self.running_time = 0
 
-    def run(self): 
-        background_music.play()
+
+    def run(self):
+        # --- Initialization ---
         pygame.display.set_caption(self.caption)
-        self.screen.fill(self.background_color) 
+        self.screen.fill(self.background_color)
 
         health = 100
-        speed = 1.5
+        speed = 12
         player = Player(health, speed, image=stronger_player_image)
-        running = True
-        last_spawn_check = time() 
         asteroids = []
         lasers = []
-        base_scrolling_y = 0 
-        
-        background_image = pygame.image.load("C:/Users/100TR/Starfall/assets/images/space_background.jpg").convert()
-        background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT)) 
+        base_scrolling_y = 0
+        last_spawn_check = time()
+        clock = pygame.time.Clock()
+        self.start_time = time()
+        self.running_time = 0
+        self.over = False
 
-        while running: 
-            for event in pygame.event.get(): 
-                if event.type == pygame.QUIT: 
+        # --- Load background ---
+        background_image = pygame.image.load(
+            "C:/Users/100TR/Starfall/assets/images/space_background.jpg"
+        ).convert()
+        background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        # --- Initialize UI ---
+        ui = UI(screen=self.screen, player=player, max_time=180)
+
+        # --- Play background music ---
+        background_music.play()
+
+        # --- Main loop ---
+        running = True
+        while running:
+            clock.tick(60)  # limit FPS
+            curr_time = time()
+            self.running_time = curr_time - self.start_time
+
+            # --- Event handling ---
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     running = False
 
-            if self.over:
-                continue
-            
-            base_scrolling_y += 0.5 
-            if base_scrolling_y >= self.screen_height: 
+            keys = pygame.key.get_pressed()
+
+            # --- Toggle pause ---
+            if keys[pygame.K_p]:
+                ui.paused = not ui.paused
+
+            if ui.paused:
+                # Draw pause overlay
+                self.screen.blit(background_image, (0, base_scrolling_y - self.screen_height))
+                self.screen.blit(background_image, (0, base_scrolling_y))
+                ui.draw_overlay("PAUSED", "Press P to resume")
+                pygame.display.flip()
+                continue  # skip updates while paused
+
+            # --- Scroll background ---
+            base_scrolling_y += 0.5
+            if base_scrolling_y >= self.screen_height:
                 base_scrolling_y = 0
 
-            self.screen.blit(background_image, (0, base_scrolling_y - self.screen_height))
-            self.screen.blit(background_image, (0, base_scrolling_y)) 
-            curr_time = time() 
-            asteroid = None
-            keys = pygame.key.get_pressed()
-            
-            self.running_time = time() - self.start_time 
-
+            # --- Difficulty / aggression ---
             if self.running_time <= 30:
-                aggression = 1 
-                difficulty = 1
-            elif 30 < self.running_time <= 60:
-                aggression = 0.75
-                difficulty = 2
-            elif 60 < self.running_time <= 180: 
-                aggression = 0.25 
-                difficulty = 3
-                vine_boom.play()
+                aggression, difficulty = 1, 1
+            elif self.running_time <= 60:
+                aggression, difficulty = 0.75, 2
+            else:
+                aggression, difficulty = 0.65, 3
 
-            if curr_time - last_spawn_check >= aggression: 
-                last_spawn_check = curr_time 
-                
-                if random.random() < 0.5: 
-                    asteroid = Asteroid()
-                    asteroids.append(asteroid)
+            # --- Spawn asteroids ---
+            if curr_time - last_spawn_check >= aggression:
+                last_spawn_check = curr_time
+                if random.random() < 0.5:
+                    asteroids.append(Asteroid())
 
+            # --- Player actions ---
             player.move()
-
             if keys[pygame.K_x]:
-                curr_shot = time()
-                if (curr_shot - player.last_shot >= 0.30):
-                    laser = Laser(speed=2, damage=50, x=player.x+12, y=player.y-20)
-                    print("Shot laser!")
+                if curr_time - player.last_shot >= 0.30:
+                    lasers.append(Laser(speed=24, damage=25, x=player.x+12, y=player.y-20))
                     laser_sound.play()
-                    lasers.append(laser)
-                    player.last_shot = curr_shot
-            
-            for x in lasers: 
-                x.display(self.screen)
-                x.move()
+                    player.last_shot = curr_time
 
-                for y in asteroids: 
-                    if x.rect.colliderect(y.rect): 
-                        y.health -= x.damage
-                        lasers.remove(x)
+            # --- Update lasers ---
+            new_lasers = []
+            for laser in lasers:
+                laser.move()
+                hit = False
+                for asteroid in asteroids[:]:
+                    if laser.rect.colliderect(asteroid.rect):
+                        asteroid.health -= laser.damage
+                        hit = True
+                        if asteroid.health <= 0:
+                            asteroids.remove(asteroid)
+                if not hit:
+                    new_lasers.append(laser)
+            lasers = new_lasers
 
-                        if y.health == 0: 
-                            asteroids.remove(y)
-                del x 
+            # --- Update asteroids ---
+            for asteroid in asteroids[:]:
+                asteroid.move()
+                if asteroid.check_collision(player):
+                    player.health -= asteroid.health // 2
+                    rock_break_sound.play()
+                    asteroids.remove(asteroid)
 
-            player.display(self.screen) 
-            
-            if asteroids:
-                for x in asteroids: 
-                    x.display(self.screen)
-                    x.move()
-                    
-                    if x.check_collision(player): 
-                        player.health -= x.health // 2
-                        rock_break_sound.play()
-                        asteroids.remove(x)
-                        del x
-            
+            # --- Check Game Over ---
             if player.health <= 0:
-                print("Game over!")
                 big_monkey_fart.play()
                 background_music.stop()
-                self.over = True
+                ui.over = True
 
+            # --- Draw everything ---
+            self.screen.blit(background_image, (0, base_scrolling_y - self.screen_height))
+            self.screen.blit(background_image, (0, base_scrolling_y))
+
+            for laser in lasers:
+                laser.display(self.screen)
+            for asteroid in asteroids:
+                asteroid.display(self.screen)
+            player.display(self.screen)
+
+            # --- Draw HUD ---
+            ui.draw_hud(running_time=self.running_time)
+
+            # --- Draw Game Over overlay if needed ---
+            if ui.over:
+                ui.draw_overlay("GAME OVER", "Press ESC to quit")
+                if keys[pygame.K_ESCAPE]:
+                    running = False
+
+            # --- Update display ---
             pygame.display.flip()
+

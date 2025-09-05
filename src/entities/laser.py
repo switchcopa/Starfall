@@ -4,7 +4,7 @@ from src.core.config import WINDOW_WIDTH, WINDOW_HEIGHT
 pygame.init()
 laser_image_path = "C:/Users/100TR/Starfall/assets/images/laser.png"
 laser_image = pygame.image.load(laser_image_path)
-laser_image = pygame.transform.scale(laser_image, (70, 70))
+laser_image = pygame.transform.scale(laser_image, (20, 70))
 
 class Laser: 
     def __init__(self, speed, damage, x, y): 
